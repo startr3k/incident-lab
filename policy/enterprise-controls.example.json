@@ -1,0 +1,18 @@
+{
+  "$comment": "Illustrative Enterprise Controls / droid settings excerpt — mirror in Settings → Enterprise Controls. block beats ask beats allow; blocked commands never run at any autonomy level.",
+  "maxAutonomyLevel": "medium",
+  "permissionRules": [
+    { "action": "allow", "pattern": "SELECT *", "tool": "shell:psql", "note": "read-only DB inspection" },
+    { "action": "allow", "pattern": "rpk (topic|group) (describe|list)", "tool": "shell:rpk" },
+    { "action": "allow", "pattern": "curl -s http://elasticsearch:9200/_*", "tool": "shell:curl" },
+    { "action": "ask",  "pattern": "kubectl rollout undo *", "approverGroup": "change-advisory", "note": "recovery actions need a named human" },
+    { "action": "ask",  "pattern": "POST http://jenkins-mock:8085/api/jobs/rollback-*", "approverGroup": "change-advisory" },
+    { "action": "block", "pattern": "kubectl delete *", "note": "no deletions, ever, from agent sessions" },
+    { "action": "block", "pattern": "DROP *", "tool": "shell:psql" },
+    { "action": "block", "pattern": "TRUNCATE *", "tool": "shell:psql" }
+  ],
+  "networkPolicy": { "allowedDomains": ["elasticsearch", "postgres", "redpanda", "jenkins-mock", "api.github.com"] },
+  "mcpPolicy": { "allowed": ["elasticsearch-lab"] },
+  "modelPolicy": { "note": "Require-BYOK demo: pin triage sessions to bank-hosted DeepSeek endpoints", "requireBYOK": true },
+  "sessionRetentionDays": 400
+}

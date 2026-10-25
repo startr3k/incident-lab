@@ -1,0 +1,19 @@
+{
+  "version": "4",
+  "status": "firing",
+  "alerts": [{
+    "status": "firing",
+    "labels": {
+      "alertname": "SettlementP99LatencyBreach",
+      "service": "payments-fee-service",
+      "env": "prod-sg",
+      "severity": "critical",
+      "team": "aiops"
+    },
+    "annotations": {
+      "summary": "p99 latency 10x baseline and HTTP 500s on /fees/calculate since 02:14 SGT; Kafka settlement.fees consumer lag growing",
+      "runbook": "https://runbooks.ocbc.example/payments-fee-service",
+      "dashboard": "https://kibana.ocbc.example/s/settlement"
+    }
+  }]
+}

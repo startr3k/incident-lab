@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "elasticsearch-lab": {
+      "command": "python3",
+      "args": ["/Users/dan/Downloads/Factory_Interview_Prep/incident-lab/mcp/es_mcp.py"],
+      "env": { "ES_URL": "http://localhost:9200" }
+    }
+  }
+}
