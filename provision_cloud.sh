@@ -58,7 +58,7 @@ for i in $(seq 1 60); do
 done
 [ -n "$seeded" ] || sudo docker compose exec -T postgres psql -U ocbc_ro -d settlement < seed/seed_postgres.sql
 # ES: wipe + reseed so the deploy marker always matches the current bad commit.
-curl -s -X DELETE "localhost:9200/payments-logs-*" >/dev/null 2>&1 || true
+curl -s -X DELETE "localhost:9200/payments-logs-2026.10.26" >/dev/null 2>&1 || true
 python3 seed/seed_es.py
 sudo bash seed/seed_kafka.sh
 

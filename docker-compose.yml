@@ -42,3 +42,14 @@ services:
     volumes:
       - ./mock:/mock:ro
     ports: ["8085:8085"]
+
+  noc-dashboard:
+    image: python:3.12-alpine
+    command: ["python", "/mock/noc_dashboard.py"]
+    environment:
+      - ES_URL=http://elasticsearch:9200
+      - JENKINS_URL=http://jenkins-mock:8085
+    volumes:
+      - ./mock:/mock:ro
+    ports: ["8090:8090"]
+    depends_on: [elasticsearch, jenkins-mock]
