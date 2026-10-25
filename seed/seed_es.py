@@ -24,7 +24,7 @@ for m in range(-15, 31):
 
 # deploy marker 02:02
 docs.append(doc(t(2, 14), "jenkins", "INFO",
-    "deploy payments-fee-service v2.14.0 build=4177 commit=a1b9c2f ns=prod-sg"))
+    "deploy payments-fee-service v2.14.0 build=4177 commit=5904ad1 ns=prod-sg"))
 
 # slow queries from 02:05, escalating
 for m in range(5, 31):

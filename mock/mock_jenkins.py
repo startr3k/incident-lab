@@ -4,7 +4,7 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 BUILDS = [
-    {"number": 4177, "timestamp": "2026-10-26T02:02:14+08:00", "commit": "a1b9c2f", "version": "v2.14.0", "result": "SUCCESS", "branch": "main"},
+    {"number": 4177, "timestamp": "2026-10-26T02:02:14+08:00", "commit": "5904ad1", "version": "v2.14.0", "result": "SUCCESS", "branch": "main"},
     {"number": 4176, "timestamp": "2026-10-25T23:40:02+08:00", "commit": "9f3e11d", "version": "v2.13.9", "result": "SUCCESS", "branch": "main"},
     {"number": 4175, "timestamp": "2026-10-25T20:11:55+08:00", "commit": "77aa02c", "version": "v2.13.8", "result": "SUCCESS", "branch": "main"},
 ]

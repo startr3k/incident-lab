@@ -20,7 +20,7 @@ Postgres seeds automatically on first start (initdb mount). If `verify.sh` fails
 5. **Record every beat** (see fallback rule in the script).
 
 ## The scripted incident (memorize this chain)
-02:02 deploy build #4177 / commit `a1b9c2f` (v2.14.0) → 02:05 fee-rule lookups switch to `LIKE '%…'` seq scan on 200k-row `fee_rules` → pool exhaustion → 02:14 p99 ×10, HTTP 500s → Kafka `settlement.fees` consumer lag grows to ~40k → replication lag logged (Qlik Replicate telemetry) → risk dashboards stale, ~41k settlement records delayed. Recovery: rollback build #4177 **via Jenkins job** (policy: ask). Fix: restore equality query + index migration + regression test.
+02:02 deploy build #4177 / commit `5904ad1` (v2.14.0) → 02:05 fee-rule lookups switch to `LIKE '%…'` seq scan on 200k-row `fee_rules` → pool exhaustion → 02:14 p99 ×10, HTTP 500s → Kafka `settlement.fees` consumer lag grows to ~40k → replication lag logged (Qlik Replicate telemetry) → risk dashboards stale, ~41k settlement records delayed. Recovery: rollback build #4177 **via Jenkins job** (policy: ask). Fix: restore equality query + index migration + regression test.
 
 ## Teardown
 `docker compose down -v`
