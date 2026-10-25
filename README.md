@@ -3,12 +3,22 @@ Synthetic replica of the OCBC-AIOps-shaped topology for the 10-minute Factory de
 Stands in: Redpanda → Kafka · mock Jenkins → Jenkins/Tekton · Postgres → Postgres/Oracle-class RDBMS · Qlik Replicate/Cloudera → seeded telemetry in ES only.
 
 ## Bring up (night before)
+**Two venues. Cloud (`ocbc-lab`) is primary — webhook automations can only run on Droid Computers; the laptop is the BYOM/session backup.**
+
 ```bash
+# Cloud venue (primary): one command — ships both repos over the relay, installs,
+# brings up the stack, seeds everything, registers MCP, runs verify.sh
+bash run_provision_remote.sh
+
+# Laptop venue (backup):
 cd incident-lab
-docker compose up -d          # ES + Postgres + Redpanda + mock Jenkins (first pull ~1.2 GB)
+docker compose up -d          # ES + Postgres + Redpanda + mock Jenkins + NOC dashboard
 sleep 45 && ./verify.sh       # must print PASS on all 5 checks
-./seed/seed_es.py             # synthetic logs 01:50–02:35 incl. deploy marker + error spike
-./seed/seed_kafka.sh          # topic + 10k msgs + consumer group lag
+./seed/seed_es.py             # only if verify shows missing docs (reseed_es.sh = clean reseed)
+./seed/seed_kafka.sh
+
+# NOC dashboards: laptop http://localhost:8090 ; cloud http://localhost:8091 via
+droid computer port-forward ocbc-lab 8091:8090
 ```
 Postgres seeds automatically on first start (initdb mount). If `verify.sh` fails, re-run after 30s (ES may still be warming).
 
