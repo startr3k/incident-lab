@@ -20,8 +20,18 @@ sudo usermod -aG docker "$USER" 2>/dev/null || true   # effective next login
 
 echo "== 2/5 repos =="
 cd ~
-[ -d incident-lab ] || git clone https://github.com/startr3k/incident-lab.git
-[ -d payments-fee-service ] || git clone https://github.com/startr3k/payments-fee-service.git
+clone() {  # clone() <org/repo> <dir> — uses GH_TOKEN if set, strips creds afterwards
+  local src="https://github.com/$1.git" dst="$2"
+  [ -d "$dst" ] && return 0
+  if [ -n "${GH_TOKEN:-}" ]; then
+    git clone "https://x-access-token:${GH_TOKEN}@github.com/$1.git" "$dst"
+    git -C "$dst" remote set-url origin "$src"
+  else
+    git clone "$src" "$dst"
+  fi
+}
+clone startr3k/incident-lab incident-lab
+clone startr3k/payments-fee-service payments-fee-service
 cd ~/incident-lab
 git pull -q --ff-only || true
 
@@ -34,11 +44,19 @@ for i in $(seq 1 90); do
 done
 
 echo "== 4/5 seeds (guarded) =="
-# Postgres self-seeds via initdb mount on first boot; seed manually only if table missing.
-if ! sudo docker compose exec -T postgres psql -U ocbc_ro -d settlement -tc \
-     "select exists(select 1 from information_schema.tables where table_name='fee_rules')" | grep -q t; then
-  sudo docker compose exec -T postgres psql -U ocbc_ro -d settlement < seed/seed_postgres.sql
-fi
+# Postgres self-seeds via initdb mount on first boot. Wait until the DB answers
+# AND the table check gives a definite answer, so we never seed mid-initdb.
+seeded=""
+for i in $(seq 1 60); do
+  ans=$(sudo docker compose exec -T postgres psql -U ocbc_ro -d settlement -tAc \
+        "select exists(select 1 from information_schema.tables where table_name='fee_rules')" 2>/dev/null || true)
+  case "$ans" in
+    t) seeded=1; echo "postgres already seeded (initdb)"; break ;;
+    f) break ;;
+    *) sleep 3 ;;
+  esac
+done
+[ -n "$seeded" ] || sudo docker compose exec -T postgres psql -U ocbc_ro -d settlement < seed/seed_postgres.sql
 # ES: wipe + reseed so the deploy marker always matches the current bad commit.
 curl -s -X DELETE "localhost:9200/payments-logs-*" >/dev/null 2>&1 || true
 python3 seed/seed_es.py
